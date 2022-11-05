@@ -9,8 +9,10 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import * as eva from '@eva-design/eva';
 import formatTime from 'minutes-seconds-milliseconds';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { ApplicationProvider } from '@ui-kitten/components';
 
 const App = () => {
   const runner = useRef();
@@ -56,59 +58,61 @@ const App = () => {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <View style={styles.container}>
-        <Text style={styles.timeText}>{formatTime(timeElapsed)}</Text>
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <SafeAreaView style={backgroundStyle}>
+        <View style={styles.container}>
+          <Text style={styles.timeText}>{formatTime(timeElapsed)}</Text>
 
-        <View style={styles.buttonStack}>
-          <TouchableOpacity
-            onPress={addLap}
-            activeOpacity={0.7}
-            style={[styles.btn, {backgroundColor: 'gray'}]}
-          >
-            <Text style={styles.blackText}>Lap</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonStack}>
+            <TouchableOpacity
+              onPress={addLap}
+              activeOpacity={0.7}
+              style={[styles.btn, {backgroundColor: 'gray'}]}
+            >
+              <Text style={styles.blackText}>Lap</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={resetLaps}
-            activeOpacity={0.7}
-            style={[styles.btn, {backgroundColor: 'gray'}]}
-          >
-            <Text style={styles.blackText}>Reset</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={resetLaps}
+              activeOpacity={0.7}
+              style={[styles.btn, {backgroundColor: 'gray'}]}
+            >
+              <Text style={styles.blackText}>Reset</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={isRunning ? styles.runningBtn : styles.btn}
-            onPress={isRunning ? stopLap : startLap}
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={isRunning ? styles.runningBtn : styles.btn}
+              onPress={isRunning ? stopLap : startLap}
+            >
+              <Text style={styles.whiteText}>{isRunning ? 'Stop' : 'Start'}</Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            horizontal={false}
+            style={styles.lapContainer}
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.whiteText}>{isRunning ? 'Stop' : 'Start'}</Text>
-          </TouchableOpacity>
+            {
+              laps.map(lap => {
+                return (
+                  <View key={lap.id} style={styles.lapItem}>
+                    <Text style={[styles.blackText, styles.lapId, styles.lapInfoText]}>
+                      Lap #{lap.id}
+                    </Text>
+
+                    <Text style={[styles.blackText, styles.lapInfoText]}>
+                      {formatTime(lap.value)}
+                    </Text>
+                  </View>
+                )
+              })
+            }
+          </ScrollView>
         </View>
-
-        <ScrollView
-          horizontal={false}
-          style={styles.lapContainer}
-          showsVerticalScrollIndicator={false}
-        >
-          {
-            laps.map(lap => {
-              return (
-                <View key={lap.id} style={styles.lapItem}>
-                  <Text style={[styles.blackText, styles.lapId, styles.lapInfoText]}>
-                    Lap #{lap.id}
-                  </Text>
-
-                  <Text style={[styles.blackText, styles.lapInfoText]}>
-                    {formatTime(lap.value)}
-                  </Text>
-                </View>
-              )
-            })
-          }
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ApplicationProvider>
   );
 };
 
